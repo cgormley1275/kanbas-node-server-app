@@ -40,4 +40,3 @@ Lab5(app);
 Hello(app);
 UserRoutes(app);
 app.listen(process.env.PORT || 4000)
-// test
