@@ -1,33 +1,27 @@
 import db from "../Database/index.js";
+import * as assignmentDao from "./dao.js"
 export default function AssignmentRoutes(app) {
-    app.put("/api/assignments/:aid", (req, res) => {
+    app.put("/api/assignments/:aid", async (req, res) => {
         const { aid } = req.params;
-        const assignmentIndex = db.assignments.findIndex(
-            (a) => a._id === aid);
-        db.assignments[assignmentIndex] = {
-            ...db.assignments[assignmentIndex],
-            ...req.body
-        };
-        res.sendStatus(204);
+        const assignmentUpdates = req.body;
+        const status = await assignmentDao.updateAssignment(assignmentUpdates);
+        res.send(status);
     });
-    app.delete("/api/assignments/:aid", (req, res) => {
+
+    app.delete("/api/assignments/:aid", async (req, res) => {
         const { aid } = req.params;
-        db.assignments = db.assignments.filter((a) => a._id !== aid);
-        res.sendStatus(200);
+        const status = await assignmentDao.deleteAssignment(aid);
+        res.send(status);
     });
-    app.post("/api/courses/:cid/assignments", (req, res) => {
-        const { cid } = req.params;
-        const newAssignment = {
-            ...req.body,
-            course: cid,
-            _id: new Date().getTime().toString(),
-        };
-        db.assignments.push(newAssignment);
-        res.send(newAssignment);
+
+    app.post("/api/courses/:cid/assignments", async (req, res) => {
+        const assignment = await assignmentDao.createAssignment(req.body);
+        res.json(assignment);
     });
-    app.get("/api/courses/:cid/assignments", (req, res) => {
+
+    app.get("/api/courses/:cid/assignments", async (req, res) => {
         const { cid } = req.params;
-        const assignments = db.assignments.filter((a) => a.course === cid);
-        res.json(assignments);
+        const assignments = await assignmentDao.findAssignmentsForCourse(cid);
+        res.send(assignments);
     });
 }
