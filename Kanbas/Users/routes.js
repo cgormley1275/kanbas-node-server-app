@@ -56,6 +56,7 @@ export default function UserRoutes(app) {
         const currentUser = await dao.findUserByCredentials(username, password);
         if (currentUser) {
             req.session["currentUser"] = currentUser;
+            req.session.save();
             res.json(currentUser);
         } else {
             res.status(401).json({ message: "Unable to login. Try again later." });
@@ -96,8 +97,8 @@ export default function UserRoutes(app) {
     const findCoursesForUser = async (req, res) => {
         const currentUser = req.session["currentUser"];
         if (!currentUser) {
-            // res.sendStatus(401);
-            res.send(`user: ${currentUser}`)
+            res.sendStatus(401);
+            // res.send(`user: ${currentUser}`)
             return;
         }
         if (currentUser.role === "ADMIN") {
