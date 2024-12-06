@@ -96,7 +96,8 @@ export default function UserRoutes(app) {
     const findCoursesForUser = async (req, res) => {
         const currentUser = req.session["currentUser"];
         if (!currentUser) {
-            res.sendStatus(401);
+            // res.sendStatus(401);
+            res.send(`user: ${currentUser}`)
             return;
         }
         if (currentUser.role === "ADMIN") {
